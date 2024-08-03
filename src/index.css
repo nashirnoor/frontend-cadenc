@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+
+/* Add this CSS to your global stylesheet or your component's CSS module */
+
+/* .sidebar::-webkit-scrollbar {
+  width: 4px; 
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: #2d2d2d; 
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: #888; 
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+} */
+
+/* Custom Scrollbar
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-gray-400 rounded-full;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-600;
+} */
