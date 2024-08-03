@@ -142,7 +142,7 @@ const Login = () => {
                 <div className="ml-8">
                     <img src={"images/official_logo.png"} className="w-60 h-20" />
                 </div>
-                <p className="font-medium text-lg text-gray-500 mt-4">Welcome back! Please enter your details</p>
+                <p className="font-medium text-lg text-gray-500 mt-4">Welcome back!! Please enter your details</p>
                 <div className="mt-6">
                     <form onSubmit={handleSubmit}>
                         {isLoading && (
