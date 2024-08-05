@@ -1,8 +1,9 @@
 import axios from "axios";
 import {jwtDecode} from 'jwt-decode';
 import dayjs from "dayjs";
+import { BASE_URL } from "../../utils/config";
 
-const baseUrl = "http://localhost:8000/api/v1";
+const baseUrl = `${BASE_URL}/api/v1`;
 
 
 const createAxiosInstance = () => {
