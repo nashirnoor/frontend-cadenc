@@ -12,7 +12,7 @@ const LandingBodyRecruiter = () => {
           <h1 className=' font-semibold text-4xl md:text-7xl leading-tight  -mt-16 pt-6 md:pt-0'>One Step Closer To Your New Job</h1>
           <p className='text-slate-500 mt-3'>Welcome to our Job Portal, where talent meets opportunities. Find your dream job with ease. Employers, connect with qualified candidates. Start your journey today!</p>
           <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 mt-3 px-4 border border-blue-700 rounded">
-            <Link to='/'>Join Now</Link>
+            <Link to='/'>Know more</Link>
           </button>
         </div>
         <div className='w-full md:w-1/2 '>
