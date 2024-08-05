@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import axiosInstance from '../users/utils/axiosInstance';
 import axios from 'axios';
 import { HiMenu, HiX } from 'react-icons/hi';
+import { BASE_URL } from '../utils/config';
 
 
 

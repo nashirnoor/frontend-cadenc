@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import Footer from '../users/components/Footer';
 import Header from './RecruiterHeader';
 import LandingBodyRecruiter from './LandingbodyRecruiter';
+import { BASE_URL } from '../utils/config';
 
 
 
