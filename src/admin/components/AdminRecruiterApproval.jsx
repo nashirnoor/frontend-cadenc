@@ -64,7 +64,7 @@ const AdminRecruiterApproval = () => {
   return (
     <>
     <Navbar />
-      <Sidebar />
+      <Sidebar active={'approve'}/>
     <div className="container mx-auto ml-56 p-20">
       <h2 className="text-2xl font-bold mb-4">Pending Recruiter Approvals</h2>
       {recruiters.length === 0 ? (

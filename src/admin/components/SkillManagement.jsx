@@ -88,7 +88,7 @@ const SkillManagement = () => {
   return (
     <>
       <Navbar/>
-      <Sidebar/>
+      <Sidebar active={'skill'}/>
       <div className="max-w-xl mx-auto mt-8 p-6 bg-white rounded-xl shadow-lg">
         <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">Skill Management</h1>
         

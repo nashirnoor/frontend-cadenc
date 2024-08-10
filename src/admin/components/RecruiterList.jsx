@@ -88,7 +88,7 @@ const RecruiterList = () => {
   return (
     <>
       <Navbar />
-      <Sidebar />
+      <Sidebar active={'recruiter'} />
 
       <div className="card ml-56 p-20">
         <div className="relative shadow-md sm:rounded-lg">
