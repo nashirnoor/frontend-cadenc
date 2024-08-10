@@ -37,7 +37,7 @@ import ChatPage from './users/components/Chat/ChatPage';
 // import PageChat from './users/components/Chat/PageChat';
 import Dashboard from './admin/components/Dashboard';
 
-
+import JobDetailRecruiter from './recruiter/JobRecruiterDetails';
 
 function App() {
   
@@ -95,6 +95,8 @@ function App() {
         <Route path='/user-profile' element={<UserProfile/>} />
 
         <Route path="/job/:id" element={<JobDetail/>} />
+        <Route path="/job-recruiter/:id" element={<JobDetailRecruiter/>} />
+
         <Route path="/experience" element={<ExperienceForm/>} />
         <Route path="/education" element={<EducationForm/>} />
 

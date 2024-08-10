@@ -48,7 +48,7 @@ const JobCardRecuiter = ({ job,onDelete,onEdit }) => {
 
   return (
     <>
-    <Link to={`/job/${job.id}`}>
+    <Link to={`/job-recruiter/${job.id}`}>
       <div className='w-full md:w-[16rem] 2xl:w-[18rem] h-[16rem] md:h-[18rem] bg-white flex flex-col justify-between shadow-lg rounded-md px-3 py-5 relative'>
         <div className='flex gap-3'>
           <div className='company-logo'>
