@@ -7,7 +7,6 @@ import CustomButton from "./Custombutton";
 import JobCard from "./JobCard";
 import axios from "axios";
 import Header from "./Header";
-import { AiOutlineClose } from 'react-icons/ai';
 import { BASE_URL } from "../../utils/config";
 
 
@@ -340,7 +339,7 @@ const JobDetail = () => {
               <div className='bg-[#fed0ab] w-40 h-16 px-6 rounded-lg flex flex-col items-center justify-center'>
                 <span className='text-sm'>No. of Applicants</span>
                 <p className='text-lg font-semibold text-gray-700'>
-                  {job?.applicants?.length}1
+                {job.applicants_count || 0}
                 </p>
               </div>
 
