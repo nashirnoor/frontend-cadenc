@@ -404,14 +404,14 @@ const JobDetail = () => {
 
             <div className='w-full'>
             <CustomButton
-                title={isApplied ? "Already Applied" : "Apply Now"}
+                title="Already Applied"
                 onClick={() => {
                   if (!isApplied) {
                     setIsModalOpen(true);
                   }
                 }}
-                containerStyles={`w-full flex items-center justify-center text-white ${isApplied ? "bg-gray-500" : "bg-black"} py-3 px-5 outline-none rounded-full text-base`}
-                disabled={isApplied}
+                containerStyles={`w-full flex items-center justify-center text-white "bg-gray-500" py-3 px-5 outline-none rounded-full text-base`}
+                disabled=""
               />
       <ApplicationModal
         isOpen={isModalOpen}
