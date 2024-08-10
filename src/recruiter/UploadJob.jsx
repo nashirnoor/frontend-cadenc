@@ -107,7 +107,7 @@ const UploadJob = () => {
   const onSubmit = async (data) => {
     try {
       await checkUserStatus();
-
+      navigate('/')
       const response = await axios.post(
         `${BASE_URL}/api/v1/auth/jobs/create/`,
         {
