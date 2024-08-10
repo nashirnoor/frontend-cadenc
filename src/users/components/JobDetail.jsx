@@ -410,7 +410,7 @@ const JobDetail = () => {
                     setIsModalOpen(true);
                   }
                 }}
-                containerStyles={`w-full flex items-center justify-center text-white "bg-gray-500" py-3 px-5 outline-none rounded-full text-base`}
+                containerStyles="w-full flex items-center justify-center text-white bg-gray-500 py-3 px-5 outline-none rounded-full text-base"
                 disabled=""
               />
       <ApplicationModal
