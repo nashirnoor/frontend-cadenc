@@ -48,7 +48,7 @@ const ResetPassword = () => {
       const response = await axiosInstance.patch('auth/set-new-password/', data);
       if (response.status === 200) {
         toast.success("Password reset successfully");
-        navigate('/login');
+        navigate('/');
       }
     } catch (error) {
       toast.error("Error resetting password. Please try again.");

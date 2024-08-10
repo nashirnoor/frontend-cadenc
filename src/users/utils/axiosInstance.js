@@ -27,7 +27,6 @@ const createAxiosInstance = () => {
                     localStorage.setItem('access', JSON.stringify(response.data.access));
                     req.headers.Authorization = `Bearer ${response.data.access}`;
                 } catch (error) {
-                    // Handle token refresh error, e.g., by redirecting to login or logging out
                     localStorage.removeItem('access');
                     localStorage.removeItem('refresh');
                     localStorage.removeItem('user');

@@ -15,9 +15,6 @@ const ChatPage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // ... existing useEffect code ...
-
-        // Fetch user type
         const fetchUserType = async () => {
             try {
                 let jwt_a = localStorage.getItem('access');

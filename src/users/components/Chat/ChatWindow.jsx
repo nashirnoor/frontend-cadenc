@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef,useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { BASE_URL } from '../../../utils/config';
+
 
 const ChatWindow = ({ selectedUser, messages, setMessages }) => {
     const [newMessage, setNewMessage] = useState('');
@@ -12,149 +13,113 @@ const ChatWindow = ({ selectedUser, messages, setMessages }) => {
     const fileInputRef = useRef(null);
     const imageInputRef = useRef(null);
     const { id: roomId } = useParams();
-    const [isConnected, setIsConnected] = useState(false);
-
+    const [, forceUpdate] = useState();
+ 
     useEffect(() => {
-        const connectWebSocket = () => {
-            let jwt_a = localStorage.getItem('access');
-            jwt_a = JSON.parse(jwt_a);
-
-            const ws = new WebSocket(`ws://localhost:8000/ws/chat/${roomId}/?token=${jwt_a}`);
-
-            ws.onopen = () => {
-                console.log('Connected to WebSocket server');
-                setIsConnected(true);
-            };
-
-            ws.onmessage = async (event) => {
-                const data = JSON.parse(event.data);
-                console.log('Received message:', data);
-                setMessages((prevMessages) => [...prevMessages, {
-                  sender: data.sent ? 'You' : selectedUser.first_name,
-                  text: data.message,
-                  date: data.date || new Date().toISOString(),
-                  file: data.file_url,
-                  image: data.image_url
-                }]);
-              
-
-            if (!data.sent) {
-                try {
-                  const jwt_a = JSON.parse(localStorage.getItem('access'));
-                  await axios.post(`${BASE_URL}/api/v1/auth/mark-messages-as-read/${roomId}/`, {}, {
-                    headers: {
-                      'Authorization': `Bearer ${jwt_a}`,
-                    }
-                  });
-                } catch (error) {
-                  console.error('Error marking message as read:', error);
-                }
-              }
-            };
-
-            ws.onclose = () => {
-                console.log('Disconnected from WebSocket server');
-                setIsConnected(false);
-            };
-
-            return ws;
+        const jwt_a = JSON.parse(localStorage.getItem('access'));
+        const wsUrl = `ws://localhost:8000/ws/chat/${selectedUser.id}/?token=${jwt_a}`;
+    
+        socketRef.current = new WebSocket(wsUrl);
+    
+        socketRef.current.onopen = () => {
+            console.log('WebSocket Connected');
         };
 
-        socketRef.current = connectWebSocket();
-
+        socketRef.current.onmessage = (e) => {
+            fetchChatHistory()
+        };
+        socketRef.current.onerror = (e) => {
+            console.error('WebSocket error:', e);
+        };
+    
         return () => {
             if (socketRef.current) {
                 socketRef.current.close();
             }
         };
-    }, [roomId, selectedUser, setMessages]);
+    }, [selectedUser, setMessages]);
+    
 
-    useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [messages]);
-
-    useEffect(() => {
-        const fetchChatHistory = async () => {
-            try {
-                let jwt_a = localStorage.getItem('access');
-                jwt_a = JSON.parse(jwt_a);
-                const response = await axios.get(`${BASE_URL}/api/v1/auth/chat/history/${selectedUser.id}/`, {
-                    headers: {
-                        'Authorization': `Bearer ${jwt_a}`,
-                    }
-                });
-                setMessages(response.data.map(msg => ({
-                    sender: msg.sender === selectedUser.id ? selectedUser.first_name : 'You',
-                    text: msg.content,
-                    date: msg.date,
-                    file: msg.file_url,
-                    image: msg.image_url
-                })));
-            } catch (error) {
-                console.error('Error fetching chat history:', error);
-            }
-        };
-
-        fetchChatHistory();
-    }, [selectedUser, setMessages,messages]);
-
-    const handleSendMessage = async () => {
-        if ((newMessage.trim() !== '' || selectedFile || selectedImage) && socketRef.current) {
-            const formData = new FormData();
-            formData.append('message', newMessage);
-            formData.append('receiver_id', selectedUser.id);
-            
-            if (selectedFile) {
-                formData.append('file', selectedFile);
-            }
-            if (selectedImage) {
-                formData.append('image', selectedImage);
-            }
-
-            try {
-                let jwt_a = localStorage.getItem('access');
-                jwt_a = JSON.parse(jwt_a);
-                
-                const response = await axios.post(`${BASE_URL}/api/v1/auth/chat/send/`, formData, {
-                    headers: {
-                        'Authorization': `Bearer ${jwt_a}`,
-                        'Content-Type': 'multipart/form-data',
-                    }
-                });
-                console.log('Sending message:', response.data);
-
-                // Create a new message object
-                const newMessageObj = {
-                    sender: 'You',
-                    text: newMessage,
-                    date: new Date().toISOString(),
-                    file: response.data.file_url,
-                    image: response.data.image_url
-                };
-
-                // Update the messages state
-                setMessages(prevMessages => [...prevMessages, newMessageObj]);
-
-                // Clear the input fields
-                setNewMessage('');
-                setSelectedFile(null);
-                setSelectedImage(null);
-
-                // Send the message through WebSocket
-                socketRef.current.send(JSON.stringify({
-                    message: newMessage,
-                    receiver_id: selectedUser.id,
-                    file_url: response.data.file_url,
-                    image_url: response.data.image_url,
-                    date: new Date().toISOString(),
-                    sent: true
-                }));
-            } catch (error) {
-                console.error('Error sending message:', error);
-            }
+    const fetchChatHistory = async () => {
+        try {
+            let jwt_a = JSON.parse(localStorage.getItem('access'));
+            const response = await axios.get(`${BASE_URL}/api/v1/auth/chat/history/${selectedUser.id}/`, {
+                headers: {
+                    'Authorization': `Bearer ${jwt_a}`,
+                }
+            });
+            const formattedMessages = response.data.map(msg => ({
+                sender: msg.sender === selectedUser.id ? selectedUser.first_name : 'You',
+                text: msg.content,
+                date: msg.date,
+                file: msg.file_url,
+                image: msg.image_url,
+                id: msg.id
+            }));
+            setMessages(formattedMessages);
+            forceUpdate({}); // Force a re-render
+        } catch (error) {
+            console.error('Error fetching chat history:', error);
         }
     };
+    useEffect(() => {
+        fetchChatHistory();
+    }, [selectedUser, setMessages]);
 
+   
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages, forceUpdate]);
+
+ 
+
+    const handleSendMessage = () => {
+        if (newMessage.trim() !== '' || selectedFile || selectedImage) {
+            const messageData = {
+                message: newMessage,
+                receiver_id: selectedUser.id,
+            };
+    
+            const processFileOrImage = (file, type) => {
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        messageData[type] = {
+                            name: file.name,
+                            type: file.type,
+                            data: e.target.result.split(',')[1] // Base64 encoded data
+                        };
+                        resolve();
+                    };
+                    reader.readAsDataURL(file);
+                });
+            };
+    
+            const sendMessageData = async () => {
+                if (selectedFile) {
+                    await processFileOrImage(selectedFile, 'file');
+                }
+                if (selectedImage) {
+                    await processFileOrImage(selectedImage, 'image');
+                }
+                sendMessage(messageData);
+            };
+    
+            sendMessageData();
+        }
+    };
+    
+    const sendMessage = (messageData) => {
+        if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+            socketRef.current.send(JSON.stringify(messageData));
+            setNewMessage('');
+            setSelectedFile(null);
+            setSelectedImage(null);
+        } else {
+            console.error('WebSocket is not open. Unable to send message.');
+        }
+    };
+    
     const handleFileChange = (event) => {
         setSelectedFile(event.target.files[0]);
     };
@@ -257,7 +222,9 @@ const ChatWindow = ({ selectedUser, messages, setMessages }) => {
     );
 };
 
-export default ChatWindow;
+export default React.memo(ChatWindow);
+
+
 
 
 

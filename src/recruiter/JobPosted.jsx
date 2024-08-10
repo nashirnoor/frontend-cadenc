@@ -56,7 +56,9 @@ const JobPosted = () => {
               <tbody className="divide-y divide-gray-200">
                 {jobs.map((job, index) => (
                   <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{job.job_title}</td>
+                       <Link to={`/job/${job.id}`}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{job.job_title}</td>
+                       </Link>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{job.salary}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
@@ -68,7 +70,7 @@ const JobPosted = () => {
                         {job.job_type}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{job.applicants_count || 1}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{job.applicants_count || 0}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{job.job_location}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">  <Link to={`/applicants/${job.id}`}>view</Link>
 </td>               

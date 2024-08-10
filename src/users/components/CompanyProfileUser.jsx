@@ -106,7 +106,7 @@ const CompanyProfileUser = () => {
 
     useEffect(() => {
         if (!jwt_access && !user) {
-            navigate("/login");
+            navigate("/");
         } else {
         }
     }, [jwt_access, user, navigate]);

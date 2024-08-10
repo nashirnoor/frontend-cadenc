@@ -10,7 +10,7 @@ const Profile = () => {
 
     useEffect(() => {
         if (!jwt_access && !user) {
-            navigate("/login");
+            navigate("/");
         } else {
             getSomeData();
         }
@@ -46,7 +46,7 @@ const Profile = () => {
             localStorage.removeItem('access');
             localStorage.removeItem('refresh');
             localStorage.removeItem('user');
-            navigate('/login');
+            navigate('/');
             toast.success("Logout successful");
         } catch (error) {
             console.error('Logout error:', error);

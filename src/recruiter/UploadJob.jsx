@@ -5,10 +5,8 @@ import { toast } from 'sonner';
 import CustomButton from "../users/components/Custombutton";
 import JobCard from "../users/components/JobCard";
 import TextInput from "../users/components/TextInput";
-import JobTypes from "./components/JobTypes";
 import Header from "./RecruiterHeader";
 import { useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
 import { BASE_URL } from "../utils/config";
 
 
@@ -333,31 +331,4 @@ const UploadJob = () => {
 export default UploadJob;
 
 
-
-
-  // useEffect(() => {
-  //   const checkForm = async () => {
-  //     try {
-  //       const jwt_access = localStorage.getItem('access');
-  //       const profileRes = await axios.get('http://localhost:8000/api/v1/auth/check-company-profile/', {
-  //         headers: {
-  //           'Authorization': `Bearer ${jwt_access}`
-  //         }
-  //       });
-        
-  //       if (profileRes.status === 204) {
-  //         // No content means no company profile
-  //         navigate("/company-form");
-  //       } else {
-  //         navigate("/upload-job")
-  //       }
-  //     } catch (error) {
-  //       console.error('Error checking company profile:', error);
-  //       // Handle error (e.g., redirect to login page if unauthorized)
-  //       navigate("/login");
-  //     }
-  //   };
-
-  //   checkForm();
-  // }, [navigate]);
   

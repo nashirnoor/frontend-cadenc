@@ -35,6 +35,14 @@ const FindJobs = () => {
   const [salaryRanges, setSalaryRanges] = useState([]);
 
 
+  const [appliedJobs, setAppliedJobs] = useState(false); // State to track applied jobs filter
+
+  const handleAppliedJobsChange = (e) => {
+  setAppliedJobs(e.target.checked);
+  filterJobs(); 
+};
+
+
 
   const sortJobs = (jobs, sortOrder) => {
     return [...jobs].sort((a, b) => {
@@ -64,12 +72,12 @@ const FindJobs = () => {
     fetchJobs();
   }, [currentPage, searchTitle, searchLocation]);
 
-
+  
 
   useEffect(() => {
     const filteredAndSortedJobs = sortJobs(filterJobs(jobs), sort);
     setFilteredJobs(filteredAndSortedJobs);
-  }, [jobs, jobTypes, experiences, locationTypes, sort,salaryRanges]);
+  }, [jobs, jobTypes, experiences, locationTypes, sort, salaryRanges,appliedJobs]);
 
   useEffect(() => {
     setFilteredTotalPages(Math.ceil(filteredJobs.length / 10));
@@ -114,16 +122,34 @@ const FindJobs = () => {
       e.target.checked ? [...prev, value] : prev.filter(range => range !== value)
     );
   };
-  
+
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
   const filterJobs = (jobs) => {
+    const userId = localStorage.getItem('user_id'); // or however you get the user ID
+
+    console.log("Applied Jobs Filter:", appliedJobs);
+    console.log("Jobs Data:", jobs);
+
     return jobs.filter(job => {
       const jobTypeMatch = jobTypes.length === 0 || jobTypes.includes(job.job_type);
-      const experienceMatch = experiences.length === 0 || experiences.includes(job.experience);
+      const experienceMatch = experiences.length === 0 || experiences.some(exp => {
+        switch (exp) {
+          case 'under 1':
+            return parseInt(job.experience) < 1;
+          case '1 - 3 years':
+            return parseInt(job.experience) >= 1 && parseInt(job.experience) <= 3;
+          case '3 - 5 years':
+            return parseInt(job.experience) > 3 && parseInt(job.experience) <= 5;
+          case '6+ years':
+            return parseInt(job.experience) > 6;
+          default:
+            return false;
+        }
+      });
       const locationTypeMatch = locationTypes.length === 0 || locationTypes.includes(job.job_location_type);
       const salaryMatch = salaryRanges.length === 0 || salaryRanges.some(range => {
         const salary = parseFloat(job.salary);
@@ -133,13 +159,12 @@ const FindJobs = () => {
         if (range === '1000000+') return salary > 1000000;
         return false;
       });
-      return jobTypeMatch && experienceMatch && locationTypeMatch && salaryMatch;
+      const appliedMatch = !appliedJobs || (userId && job.applications.some(app => app.id === parseInt(userId)));
+  
+      return jobTypeMatch && experienceMatch && locationTypeMatch && salaryMatch && appliedMatch;
     });
   };
   
-  
-
-
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
@@ -238,30 +263,54 @@ const FindJobs = () => {
             </div>
           </div>
           <div className='py-2 mt-4'>
-  <div className='flex justify-between mb-3'>
-    <p className='flex items-center gap-2 font-semibold'>
-      <BsStars />
-      Salary
-    </p>
-    <button>
-      <MdOutlineKeyboardArrowDown />
-    </button>
-  </div>
-  <div className='flex flex-col gap-2'>
-    {['300000-500000', '500000-700000', '700000-1000000', '1000000+'].map((range) => (
-      <div key={range} className='flex gap-3'>
-        <input
-          type='checkbox'
-          value={range}
-          className='w-4 h-4'
-          onChange={handleSalaryChange}
-          checked={salaryRanges.includes(range)}
-        />
-        <span>{range}</span>
-      </div>
-    ))}
-  </div>
-</div>
+            <div className='flex justify-between mb-3'>
+              <p className='flex items-center gap-2 font-semibold'>
+                <BsStars />
+                Salary
+              </p>
+              <button>
+                <MdOutlineKeyboardArrowDown />
+              </button>
+            </div>
+            <div className='flex flex-col gap-2'>
+              {['300000-500000', '500000-700000', '700000-1000000', '1000000+'].map((range) => (
+                <div key={range} className='flex gap-3'>
+                  <input
+                    type='checkbox'
+                    value={range}
+                    className='w-4 h-4'
+                    onChange={handleSalaryChange}
+                    checked={salaryRanges.includes(range)}
+                  />
+                  <span>{range}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className='py-2'>
+            <div className='flex justify-between mb-3'>
+              <p className='flex items-center gap-2 font-semibold'>
+                <BiBriefcaseAlt2 />
+                Applied
+              </p>
+              <button>
+                <MdOutlineKeyboardArrowDown />
+              </button>
+            </div>
+            <div className='flex flex-col gap-2'>
+            <div key="" className='flex gap-2 text-sm md:text-base'>
+          <input
+            type='checkbox'
+            value=""
+            className='w-4 h-5'
+            onChange={handleAppliedJobsChange}
+            checked={appliedJobs}
+          />
+          <span>Applied</span>
+        </div>
+            </div>
+          </div>
 
         </div>
 
@@ -274,6 +323,7 @@ const FindJobs = () => {
             <div className='flex flex-col md:flex-row gap-0 md:gap-2 md:items-center'>
               <p className='text-sm md:text-base'>Sort By:</p>
               <ListBox sort={sort} setSort={setSort} />
+
             </div>
           </div>
 

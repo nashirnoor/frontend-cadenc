@@ -8,6 +8,8 @@ import { BASE_URL } from '../../utils/config';
 
 const AdminRecruiterApproval = () => {
   const [recruiters, setRecruiters] = useState([]);
+  const [rejectReason, setRejectReason] = useState('');
+  const [rejectingRecruiterId, setRejectingRecruiterId] = useState(null);
 
   useEffect(() => {
     fetchRecruiters();
@@ -19,7 +21,7 @@ const AdminRecruiterApproval = () => {
 
       const res = await axios.get(`${BASE_URL}/api/v1/auth/admin/recruiters/pending/`, {
         headers: {
-          Authorization: `Bearer ${token}`, // Pass the token in the header
+          Authorization: `Bearer ${token}`,
         },
       });
       setRecruiters(res.data);
@@ -33,23 +35,31 @@ const AdminRecruiterApproval = () => {
     try {
       let token = localStorage.getItem('access_token');
       
+      if (action === 'reject' && !rejectReason) {
+        toast.error('Please provide a reason for rejection');
+        return;
+      }
+
+      const data = action === 'reject' ? { action, reason: rejectReason } : { action };
+
       await axios.post(
         `${BASE_URL}/api/v1/auth/admin/recruiters/pending/${recruiterId}/`,
-        { action },
+        data,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Pass the token in the header
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-      
+
       fetchRecruiters();
       toast.success(`Recruiter ${action}d successfully`);
+      setRejectingRecruiterId(null);
+      setRejectReason('');
     } catch (error) {
       toast.error(`Failed to ${action} recruiter`);
     }
   };
-  
 
   return (
     <>
@@ -71,28 +81,46 @@ const AdminRecruiterApproval = () => {
               </tr>
             </thead>
             <tbody>
-              {recruiters.map((recruiter) => (
-                <tr key={recruiter.id} className="hover:bg-gray-50">
-                  <td className="py-2 px-4 border-b">{recruiter.email}</td>
-                  <td className="py-2 px-4 border-b">{recruiter.first_name}</td>
-                  <td className="py-2 px-4 border-b">{recruiter.company_name}</td>
-                  <td className="py-2 px-4 border-b mr-1">
-                    <button
-                      className="bg-green-500 text-white py-1 px-3 rounded mr-2 hover:bg-green-600"
-                      onClick={() => handleApproval(recruiter.id, 'approve')}
-                    >
-                      Approve
-                    </button>
-                    <button
-                      className="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600"
-                      onClick={() => handleApproval(recruiter.id, 'reject')}
-                    >
-                      Reject
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+                {recruiters.map((recruiter) => (
+                  <tr key={recruiter.id} className="hover:bg-gray-50">
+                    <td className="py-2 px-4 border-b">{recruiter.email}</td>
+                    <td className="py-2 px-4 border-b">{recruiter.first_name}</td>
+                    <td className="py-2 px-4 border-b">{recruiter.company_name}</td>
+                    <td className="py-2 px-4 border-b mr-1">
+                      <button
+                        className="bg-green-500 text-white py-1 px-3 rounded mr-2 hover:bg-green-600"
+                        onClick={() => handleApproval(recruiter.id, 'approve')}
+                      >
+                        Approve
+                      </button>
+                      {rejectingRecruiterId === recruiter.id ? (
+                        <div>
+                          <input
+                            type="text"
+                            value={rejectReason}
+                            onChange={(e) => setRejectReason(e.target.value)}
+                            placeholder="Reason for rejection"
+                            className="border rounded px-2 py-1 mr-2"
+                          />
+                          <button
+                            className="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600"
+                            onClick={() => handleApproval(recruiter.id, 'reject')}
+                          >
+                            Confirm Reject
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          className="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600"
+                          onClick={() => setRejectingRecruiterId(recruiter.id)}
+                        >
+                          Reject
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
           </table>
         </div>
       )}

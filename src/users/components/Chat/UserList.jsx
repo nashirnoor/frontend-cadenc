@@ -35,7 +35,7 @@ const UserList = ({ setSelectedUser, fetchUnreadCounts }) => {
     fetchChatRooms();
     updateUnreadCounts();
 
-    const intervalId = setInterval(updateUnreadCounts, 5000);
+    const intervalId = setInterval(updateUnreadCounts, 50000);
 
     return () => clearInterval(intervalId);
   }, [fetchUnreadCounts]);
@@ -43,6 +43,7 @@ const UserList = ({ setSelectedUser, fetchUnreadCounts }) => {
   const handleUserSelect = async (user) => {
     setSelectedUser(user);
     localStorage.setItem('selectedUser', JSON.stringify(user));
+    console.log(user,"This is the selected userrr")
     
     try {
       const jwt_a = JSON.parse(localStorage.getItem('access'));
@@ -58,8 +59,7 @@ const UserList = ({ setSelectedUser, fetchUnreadCounts }) => {
     } catch (error) {
       console.error('Error marking messages as read:', error);
     }
-
-    navigate(`/chat/${user.room_id}`);
+    navigate(`/chat/`);
   };
 
   return (

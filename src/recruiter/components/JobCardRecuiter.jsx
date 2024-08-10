@@ -81,7 +81,7 @@ const JobCardRecuiter = ({ job,onDelete,onEdit }) => {
 
         {/* Delete icon and confirmation */}
         <button
-              className='text-gray-400 hover:text-blue-500'
+              className='absolute top-2 right-7 text-gray-400 hover:text-blue-500'
               onClick={handleEditClick}
             >
               <MdEdit size={20} />

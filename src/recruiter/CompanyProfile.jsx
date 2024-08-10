@@ -38,10 +38,7 @@ const CompanyForm = ({ open, setOpen, companyInfo, onSubmit, onUpdate, getCompan
       setValue("company_logo", companyInfo.company_logo);
     }
   }, [companyInfo, setValue]);
-
   const closeModal = () => setOpen(false);
-  
-
   const handleFormSubmit = (data) => {
 
     const formData = new FormData();
@@ -60,7 +57,6 @@ const CompanyForm = ({ open, setOpen, companyInfo, onSubmit, onUpdate, getCompan
     const jwt_access = localStorage.getItem('access') ? JSON.parse(localStorage.getItem('access')) : null;
     console.log(jwt_access)
     
-
     axiosInstance.put(`${BASE_URL}/api/v1/auth/company-profile/update/${companyInfo.id}/`, formData, {
       headers: {
         'Authorization': `Bearer ${jwt_access}`,
@@ -235,7 +231,7 @@ const CompanyProfile = () => {
       } catch (error) {
         console.error('Error checking company profile:', error);
         // Handle error (e.g., redirect to login page if unauthorized)
-        navigate("/login");
+        navigate("/");
       }
     };
 
@@ -347,7 +343,7 @@ const CompanyProfile = () => {
 
   useEffect(() => {
     if (!jwt_access && !user) {
-      navigate("/login");
+      navigate("/");
     } else {
     }
   }, [jwt_access, user, navigate]);
@@ -364,7 +360,7 @@ const CompanyProfile = () => {
       localStorage.removeItem('access');
       localStorage.removeItem('refresh');
       localStorage.removeItem('user');
-      navigate('/login');
+      navigate('/');
       toast.success("Logout successful");
     } catch (error) {
       console.error('Logout error:', error);
@@ -379,7 +375,7 @@ const CompanyProfile = () => {
   const handleUpdateJob = async (updatedJob) => {
     try {
       const jwt_a = JSON.parse(localStorage.getItem('access'));
-      await axios.put(`${BASE_URL}/api/v1/auth/jobs/${updatedJob.id}/`, updatedJob, {
+      await axios.put(`${BASE_URL}/api/v1/auth/jobs/update/${updatedJob.id}/`, updatedJob, {
         headers: {
           'Authorization': `Bearer ${jwt_a}`,
         }
@@ -487,8 +483,6 @@ const CompanyProfile = () => {
         <p className="text-gray-700">{about || 'No company description available.'}</p>
       )}
     </div>
-
-
           <div className="flex flex-col items-center mt-10 md:mt-10">
             <span className="text-xl font-bold">{jobs?.length}</span>
             <p className="text-blue-600">Job Post</p>
@@ -690,7 +684,8 @@ return (
                      <p className='mt-1 text-sm text-red-600'>{errors.job_description?.message}</p>
                    )}
                  </div>
-                 <div className="mb-6">
+
+                 {/* <div className="mb-6">
                      <label htmlFor="skills" className="block text-sm font-medium text-gray-700 mb-2">
                        Skills
                      </label>
@@ -730,8 +725,8 @@ return (
                          </span>
                        ))}
                      </div>
-                   </div>
- 
+                   </div> */}
+
                  <div>
                    <label className='block text-sm font-medium text-gray-700 mb-1'>Core Responsibilities</label>
                    <textarea
@@ -746,7 +741,7 @@ return (
                    )}
                  </div>
  
-                 {errMsg && <p className="text-sm text-red-600">{errMsg}</p>}
+                 {/* {errMsg && <p className="text-sm text-red-600">{errMsg}</p>} */}
  
                  <div>
                    <CustomButton
