@@ -1,11 +1,12 @@
-import React,{useState, useEffect} from 'react';
+import React,{useState, useEffect, act} from 'react';
 import {FaHome,FaRegFileAlt,FaUser} from 'react-icons/fa';
 import {Link} from 'react-router-dom';
 import axios from 'axios';
 import { BASE_URL } from '../../utils/config';
 
 
-const Sidebar = () => {
+const Sidebar = ({active}) => {
+  console.log("This is activae",active)
     const [notifications, setNotifications] = useState({ user_count: 0, recruiter_count: 0 });
     useEffect(() => {
         const fetchNotifications = async () => {
@@ -43,6 +44,7 @@ const Sidebar = () => {
           console.error('Error marking notifications as read:', error);
         }
       };
+      
   return (
     <div className='w-64 bg-gray-800 fixed h-full px-4 py-2'>
         <div className='my-2 mb-4'>
@@ -50,7 +52,7 @@ const Sidebar = () => {
         </div>    
         <hr/>
         <ul className='mt-3 text-white font-bold'>
-            <li className='mb-2 rounded hover:shadow hover:bg-blue-500 py-2'>
+            <li className={active=="dashboard"?'mb-2 rounded hover:shadow bg-blue-500 py-2': 'mb-2 rounded hover:shadow hover:bg-blue-500 py-2'}>
                 <a href='' className='px-3'>
                     <FaHome className='inline-block w-6 h-6 mr-2 -mt-2'></FaHome>
                     <Link to="/dashboard">Dashboard</Link>
