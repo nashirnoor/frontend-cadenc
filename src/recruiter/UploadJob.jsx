@@ -8,10 +8,11 @@ import TextInput from "../users/components/TextInput";
 import Header from "./RecruiterHeader";
 import { useEffect } from "react";
 import { BASE_URL } from "../utils/config";
+import { useNavigate } from 'react-router-dom';
 
 
 const UploadJob = () => {
-
+  const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors }, reset } = useForm({
     mode: 'onChange',
     defaultValues: {},
@@ -40,6 +41,32 @@ const UploadJob = () => {
       console.error('Error fetching skills:', error);
     }
   };
+
+  const checkUserStatus = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/api/v1/auth/user-status/`, {
+        headers: {
+          'Authorization': `Bearer ${jwt_access}`,
+        },
+      });
+      if (response.data.is_blocked) {
+        // User is blocked, remove token and redirect
+        localStorage.removeItem('access');
+        localStorage.removeItem('refresh');
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Error checking user status:', error);
+      // If there's an error (e.g., unauthorized), also remove token and redirect
+      localStorage.removeItem('access');
+      localStorage.removeItem('refresh');
+      navigate('/');
+    }
+  };
+
+  useEffect(() => {
+    checkUserStatus();
+  }, []);
 
   const fetchJobs = async () => {
     try {
@@ -79,6 +106,8 @@ const UploadJob = () => {
 
   const onSubmit = async (data) => {
     try {
+      await checkUserStatus();
+
       const response = await axios.post(
         `${BASE_URL}/api/v1/auth/jobs/create/`,
         {
@@ -109,6 +138,12 @@ const UploadJob = () => {
       if (error.response && error.response.data && error.response.data.error) {
         setErrMsg(error.response.data.error);
         toast.error(error.response.data.error);
+        if (error.response && error.response.status === 403) {
+          // User is blocked or unauthorized
+          localStorage.removeItem('access');
+          localStorage.removeItem('refresh');
+          navigate('/');
+        }
       } else {
         setErrMsg('An error occurred while posting the job.');
         toast.error('Failed to post the job.');
