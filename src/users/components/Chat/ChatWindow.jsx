@@ -17,7 +17,7 @@ const ChatWindow = ({ selectedUser, messages, setMessages }) => {
  
     useEffect(() => {
         const jwt_a = JSON.parse(localStorage.getItem('access'));
-        const wsUrl = `ws://localhost:8000/ws/chat/${selectedUser.id}/?token=${jwt_a}`;
+        const wsUrl = `ws://techzonne.online/ws/chat/${selectedUser.id}/?token=${jwt_a}`;
     
         socketRef.current = new WebSocket(wsUrl);
     
